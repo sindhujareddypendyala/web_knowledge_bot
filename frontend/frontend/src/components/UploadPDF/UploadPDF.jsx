@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { FiCheckCircle, FiFileText, FiUploadCloud } from 'react-icons/fi'
+import { uploadPDF } from '../../services/api.js'
 
 export default function UploadPDF({ onUploaded }) {
   const inputRef = useRef(null)
@@ -7,25 +8,28 @@ export default function UploadPDF({ onUploaded }) {
   const [status, setStatus] = useState('idle')
   const [fileName, setFileName] = useState('')
 
-  function handleFile(file) {
+  async function handleFile(file) {
     if (!file || file.type !== 'application/pdf') {
       setStatus('error')
       return
     }
     setFileName(file.name)
     setStatus('uploading')
-    setProgress(18)
-    const timer = window.setInterval(() => {
-      setProgress((current) => {
-        if (current >= 100) {
-          window.clearInterval(timer)
-          setStatus('success')
-          onUploaded?.(file)
-          return 100
+    setProgress(5)
+    
+    try {
+      await uploadPDF(file, (progressEvent) => {
+        if (progressEvent.total) {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+          setProgress(percentCompleted)
         }
-        return Math.min(current + 22, 100)
       })
-    }, 180)
+      setStatus('success')
+      onUploaded?.(file)
+    } catch (err) {
+      console.error('Failed to upload PDF:', err)
+      setStatus('error')
+    }
   }
 
   return (

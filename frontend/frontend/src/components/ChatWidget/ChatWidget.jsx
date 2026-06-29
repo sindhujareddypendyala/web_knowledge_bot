@@ -5,10 +5,12 @@ import SuggestionChips from '../SuggestionChips/SuggestionChips.jsx'
 import TypingIndicator from '../TypingIndicator/TypingIndicator.jsx'
 import UploadPDF from '../UploadPDF/UploadPDF.jsx'
 import { useChat } from '../../hooks/useChat.js'
+import { uploadPDF } from '../../services/api.js'
 
 export default function ChatWidget({ onClose, onMinimize }) {
   const chat = useChat()
   const bottomRef = useRef(null)
+  const fileInputRef = useRef(null)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -24,6 +26,34 @@ export default function ChatWidget({ onClose, onMinimize }) {
     window.addEventListener('keydown', handleShortcut)
     return () => window.removeEventListener('keydown', handleShortcut)
   }, [])
+
+  async function handleFileInputChange(event) {
+    const file = event.target.files[0]
+    if (!file) return
+    if (file.type !== 'application/pdf') {
+      chat.setToast('Please upload a valid PDF file.')
+      return
+    }
+
+    chat.setToast(`Uploading and indexing ${file.name}...`)
+    try {
+      await uploadPDF(file)
+      chat.setToast(`Successfully indexed ${file.name}!`)
+      
+      const successMessage = {
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        content: `Successfully uploaded and indexed **"${file.name}"**! You can now ask questions about its contents.`,
+        source: 'pdf',
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        createdAt: Date.now()
+      }
+      chat.setMessages((current) => [...current, successMessage])
+    } catch (err) {
+      console.error('Failed to upload PDF:', err)
+      chat.setToast('Failed to upload and index PDF.')
+    }
+  }
 
   return (
     <section
@@ -72,7 +102,18 @@ export default function ChatWidget({ onClose, onMinimize }) {
               </p>
             </div>
             <SuggestionChips onSelect={chat.selectSuggestion} />
-            <UploadPDF onUploaded={() => chat.setToast('PDF Uploaded Successfully')} />
+            <UploadPDF onUploaded={(file) => {
+              chat.setToast(`Successfully indexed ${file.name}!`)
+              const successMessage = {
+                id: crypto.randomUUID(),
+                role: 'assistant',
+                content: `Successfully uploaded and indexed **"${file.name}"**! You can now ask questions about its contents.`,
+                source: 'pdf',
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                createdAt: Date.now()
+              }
+              chat.setMessages((current) => [...current, successMessage])
+            }} />
           </div>
         )}
 
@@ -93,10 +134,18 @@ export default function ChatWidget({ onClose, onMinimize }) {
           }}
           className="flex items-center gap-2 rounded-full border border-blue-500/30 bg-slate-950/40 p-1.5 focus-within:border-blue-450 focus-within:ring-4 focus-within:ring-blue-500/15"
         >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/pdf"
+            className="sr-only"
+            onChange={handleFileInputChange}
+          />
           <button
             type="button"
             aria-label="Upload PDF"
             title="Upload PDF documentation"
+            onClick={() => fileInputRef.current?.click()}
             className="focus-ring grid h-9 w-9 shrink-0 place-items-center rounded-full text-slate-400 hover:bg-slate-800 hover:text-blue-300 transition"
           >
             <FiUploadCloud aria-hidden="true" />
