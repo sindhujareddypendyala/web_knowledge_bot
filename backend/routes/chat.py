@@ -129,9 +129,19 @@ async def chat(
         retriever = IntegratedRetriever()
         retrieved_chunks = retriever.retrieve(request.message, k=5)
     else:
-        logger.info("No technical domain detected. Retrieving from existing unified index.")
-        retriever = IntegratedRetriever()
-        retrieved_chunks = retriever.retrieve(request.message, k=5)
+        logger.info("No technical domain detected. Returning domain-specific fallback response.")
+        fallback_response = (
+            "I am a domain-specific technical documentation assistant. "
+            "I can only assist with queries related to my supported domains: "
+            "Python, FastAPI, Docker, Kubernetes, React, AWS, Linux, Git, and PostgreSQL. "
+            "Please ask a question related to one of these topics."
+        )
+        add_message(session_id, "assistant", fallback_response)
+        return ChatResponse(
+            session_id=session_id,
+            response=fallback_response,
+            sources=[],
+        )
 
     # Map retrieved chunks to response sources schema
     for chunk in retrieved_chunks:

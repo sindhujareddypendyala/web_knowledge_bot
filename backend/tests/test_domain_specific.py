@@ -115,3 +115,17 @@ def test_chat_route_groq_fallback(
     assert "session_id" in data
     assert data["response"] == "FastAPI groq mock response"
 
+
+def test_chat_route_off_domain_fallback() -> None:
+    client = TestClient(app)
+    response = client.post(
+        "/chat",
+        json={"message": "What is the weather today?"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "session_id" in data
+    assert "I am a domain-specific technical documentation assistant" in data["response"]
+    assert len(data["sources"]) == 0
+
+
