@@ -1,89 +1,230 @@
----
-title: Web Knowledge Backend
-emoji: 🤖
-colorFrom: blue
-colorTo: indigo
-sdk: docker
-app_port: 7860
-pinned: false
----
+# 🤖 Web Knowledge Bot
 
-# RAG Web Knowledge Bot (Integrated Project)
+An AI-powered **Technical Documentation Assistant** built using **Retrieval-Augmented Generation (RAG)** to help developers quickly find accurate answers from technical documentation websites and uploaded PDF documents.
 
-A Retrieval-Augmented Generation (RAG) system containing a FastAPI backend, a React chat frontend widget, and a command-line interface (CLI) bot runner. The system classifies technical queries, retrieves documentation from trusted websites in real-time, stores them in ChromaDB, and generates grounded answers using Gemini (with automatic Groq fallback).
+Instead of manually searching through lengthy API documentation, SDKs, or developer guides, users can ask questions in natural language and receive context-aware responses generated using **Google Gemini** and **ChromaDB**.
 
 ---
 
-## 📁 Repository Structure
+# 🚀 Project Overview
 
-- **`backend/`**: FastAPI backend server implementing the core RAG pipeline (search, parallel crawling, HTML processing, indexing, vector storage, and query generation).
-- **`frontend/`**: Vite + React chat widget web application (`frontend/frontend/`).
-- **`bot/`**: A standalone Python command-line interface for RAG chat.
-- **`main.py`**: Root-level orchestrator script to run services locally.
-- **`Dockerfile`**: Root Docker configuration for deploying the backend to Hugging Face Spaces.
-- **`.gitignore`**: Global rules to keep local caches, node modules, virtual environments, and `.env` credentials out of version control.
+The Web Knowledge Bot combines two knowledge sources into a single AI assistant:
+
+* 🌐 Technical Documentation Websites
+* 📄 User Uploaded PDF Documents
+
+The system retrieves the most relevant information using semantic search and generates grounded responses with source references.
 
 ---
 
-## 🛠️ Local Development Setup
+# ✨ Key Features
 
-### 1. Prerequisites
-- Python 3.10+
-- Node.js & npm (for React frontend)
+* AI-powered technical documentation assistant
+* Ask questions in natural language
+* Upload PDF documents and chat with them
+* Crawl and index technical documentation websites
+* Retrieval-Augmented Generation (RAG)
+* Semantic search using ChromaDB
+* Google Gemini integration
+* Source attribution for every response
+* Modern React-based chat interface
+* FastAPI backend with REST APIs
+* Automatic fallback support for supported LLM providers
 
-### 2. Environment Configuration
-Create a `.env` file at the root of the **`backend/`** directory (and `bot/` directory if running the CLI bot) with the following variables:
+---
+
+# 🏗️ Project Architecture
+
+```
+User
+   │
+   ▼
+React Frontend
+   │
+   ▼
+FastAPI Backend
+   │
+   ├───────────────┐
+   │               │
+   ▼               ▼
+Website RAG     PDF RAG
+   │               │
+   └───────┬───────┘
+           ▼
+     ChromaDB Retriever
+           ▼
+      Google Gemini
+           ▼
+     AI Generated Response
+```
+
+---
+
+# 📂 Repository Structure
+
+```
+web_knowledge_bot/
+
+backend/
+│
+├── api/
+├── pdf/
+├── embeddings/
+├── rag/
+├── llm/
+├── utils/
+├── database/
+├── uploads/
+└── vector_db/
+
+frontend/
+│
+├── src/
+├── components/
+├── pages/
+└── assets/
+
+bot/
+│
+└── CLI Assistant
+
+README.md
+Dockerfile
+```
+
+---
+
+# 🛠️ Tech Stack
+
+### Frontend
+
+* React
+* Vite
+* Tailwind CSS
+
+### Backend
+
+* FastAPI
+* Python
+
+### AI & RAG
+
+* Google Gemini
+* LangChain
+* ChromaDB
+* PyPDF
+
+### Utilities
+
+* BeautifulSoup
+* Requests
+* python-dotenv
+
+---
+
+# ⚙️ Environment Variables
+
+Create a `.env` file inside the **backend** directory.
+
 ```env
-GOOGLE_API_KEY=your_gemini_or_groq_api_key_here
+GOOGLE_API_KEY=YOUR_API_KEY
 EMBEDDING_PROVIDER=huggingface
 ```
-*Note: If `GOOGLE_API_KEY` starts with `gsk_`, the backend will automatically route chat completion requests to the Groq Llama-3 API fallback.*
-
-### 3. Running Services Locally
-Use the root `main.py` orchestrator script to run services from the root folder:
-
-- **Start the FastAPI Backend**:
-  ```bash
-  python main.py backend
-  ```
-  *(Service runs on `http://127.0.0.1:8000`)*
-
-- **Start the Bot CLI**:
-  ```bash
-  python main.py bot
-  ```
-
-- **Run Backend Unit Tests**:
-  ```bash
-  python main.py test
-  ```
-
-- **Start the React Frontend**:
-  Navigate to the frontend project and launch the Vite development server:
-  ```bash
-  cd frontend/frontend
-  npm install
-  npm run dev
-  ```
 
 ---
 
-## 🚀 Cloud Deployment
+# ▶️ Running the Project
 
-### 1. Backend (Hugging Face Spaces)
-1. Create a new Space on [Hugging Face](https://huggingface.co/).
-2. Select **Docker** as the SDK and choose the **Blank** template.
-3. In **Settings** under **Variables and secrets**, add a secret named `GOOGLE_API_KEY` with your API key.
-4. Add the Space git repository as a remote and push code:
-   ```bash
-   git remote add hf https://huggingface.co/spaces/YOUR_USERNAME/YOUR_SPACE_NAME
-   git push -f hf main
-   ```
+## 1. Clone Repository
 
-### 2. Frontend (Vercel)
-1. Create a new project on [Vercel](https://vercel.com/) and import your GitHub repository.
-2. Set the **Root Directory** to `frontend/frontend`.
-3. Add the following **Environment Variable**:
-   - **Key**: `VITE_API_BASE_URL`
-   - **Value**: `https://YOUR_HF_USERNAME-YOUR_SPACE_NAME.hf.space` *(your Hugging Face direct API endpoint)*
-4. Click **Deploy**.
+```bash
+git clone <repository-url>
+cd web_knowledge_bot
+```
+
+---
+
+## 2. Backend
+
+```bash
+cd backend
+
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+
+pip install -r requirements.txt
+
+uvicorn app:app --reload
+```
+
+Backend will run at:
+
+```
+http://127.0.0.1:8000
+```
+
+API Documentation:
+
+```
+http://127.0.0.1:8000/docs
+```
+
+---
+
+## 3. Frontend
+
+```bash
+cd frontend
+
+npm install
+
+npm run dev
+```
+
+---
+
+# 🌐 Deployment
+
+### Backend
+
+Deploy the FastAPI backend using Docker on Hugging Face Spaces.
+
+### Frontend
+
+Deploy the React application on Vercel.
+
+Set the following environment variable:
+
+```
+VITE_API_BASE_URL=https://YOUR_BACKEND_URL
+```
+
+---
+
+# 📌 Future Enhancements
+
+* Multi-document conversations
+* Support for multiple documentation websites
+* Hybrid search (BM25 + Vector Search)
+* Authentication & user sessions
+* Chat history synchronization
+* Voice-based interactions
+* Streaming AI responses
+* Advanced source citation
+
+---
+
+# 👥 Team
+
+**Team Hufflepuff** -- Pendyala Sindhuja
+
+Developed as part of the **GenAI Internship at Augur CyberX**.
+
+---
+
+# 📄 License
+
+This project is developed for educational and internship purposes.
+
