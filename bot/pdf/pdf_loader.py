@@ -64,7 +64,7 @@ class PDFLoader:
         if Path(filename).suffix.lower() != ".pdf":
             raise ValueError(f"{filename} is not a PDF file.")
 
-        if file.content_type not in {None, "", "application/pdf"}:
+        if file.content_type not in {None, "", "application/pdf", "application/octet-stream", "binary/octet-stream"}:
             raise ValueError(f"{filename} must use application/pdf content type.")
 
         return filename

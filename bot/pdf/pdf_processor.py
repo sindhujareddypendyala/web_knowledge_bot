@@ -1,3 +1,4 @@
+import asyncio
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -72,9 +73,11 @@ class PDFProcessor:
     ) -> list[ProcessedPDFDocument]:
         """Process multiple uploaded PDFs into indexed document payloads."""
         processed_documents: list[ProcessedPDFDocument] = []
+        loop = asyncio.get_event_loop()
 
         for file in files:
-            processed_documents.append(self.process_upload(file))
+            doc = await loop.run_in_executor(None, self.process_upload, file)
+            processed_documents.append(doc)
 
         return processed_documents
 

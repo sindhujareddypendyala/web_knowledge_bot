@@ -12,7 +12,7 @@ export async function sendMessage(payload) {
 
 export async function uploadPDF(file, onUploadProgress) {
   const formData = new FormData()
-  formData.append('file', file)
+  formData.append('files', file)
 
   const response = await apiClient.post('/upload_pdf', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
