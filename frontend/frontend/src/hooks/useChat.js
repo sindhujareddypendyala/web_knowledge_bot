@@ -101,6 +101,7 @@ export function useChat() {
   const value = useMemo(
     () => ({
       messages,
+      setMessages,
       draft,
       setDraft,
       isTyping,
