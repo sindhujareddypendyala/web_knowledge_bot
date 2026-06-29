@@ -29,10 +29,10 @@ class DomainClassifier:
             (
                 re.compile(
                     r"\b(ai|ml|genai|artificial\s+intelligence|machine\s+learning|deep\s+learning|"
-                    r"langchain|llama|rag|embedding|llm|nlp|neural\s+network|"
+                    r"lang\s*chain|llama|rag|embedding|llm|nlp|neural\s*network|"
                     r"backend|frontend|server|client|api|rest|graphql|grpc|http|"
                     r"sdk|auth|login|signin|signup|credential|token|jwt|oauth|authenticate|authentication|authorize|"
-                    r"rate\s+limit|throttle|middleware|route|controller|view|template|"
+                    r"rate\s*limit|throttle|middleware|route|controller|view|template|"
                     r"database|sql|nosql|query|index|schema|migration|orm|"
                     r"code|programming|develop|software|deploy|ci/cd|devops|"
                     r"cloud|gcp|azure|serverless|lambda|"
@@ -40,7 +40,8 @@ class DomainClassifier:
                     r"javascript|typescript|java|c\+\+|c\#|ruby|php|go|rust|"
                     r"html|css|vue|angular|svelte|nextjs|nuxt|"
                     r"django|flask|express|spring|rails|laravel|"
-                    r"mysql|sqlite|mongodb|redis|elasticsearch|explain|examples?|quick\s+start|guide)\b",
+                    r"mysql|sqlite|mongodb|redis|elasticsearch|explain|examples?|quick\s+start|guide|"
+                    r"pdf|document|file|summary|summarize|describe)\b",
                     re.IGNORECASE,
                 ),
                 "general",
