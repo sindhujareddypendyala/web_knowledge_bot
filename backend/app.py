@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from api.health import router as health_router
 from api.routes import router as api_router
@@ -15,6 +16,13 @@ from utils.exceptions import WebsiteKnowledgeError
 
 app = FastAPI(title=settings.app_name, version=settings.app_version)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.exception_handler(WebsiteKnowledgeError)
 async def website_error_handler(_: Request, exc: WebsiteKnowledgeError) -> JSONResponse:

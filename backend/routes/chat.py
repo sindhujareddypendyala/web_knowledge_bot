@@ -253,7 +253,7 @@ class UploadPDFResponse(BaseModel):
     documents: list[str]
 
 
-@router.post("/upload-pdf", response_model=UploadPDFResponse)
+@router.post("/upload_pdf", response_model=UploadPDFResponse)
 async def upload_pdf(file: UploadFile = File(...)) -> UploadPDFResponse:
     """
     Upload and index a PDF file in the vector store.
