@@ -64,6 +64,6 @@ def home() -> str:
     """
 
 
-app.router.routes.extend(health_router.routes)
-app.router.routes.extend(api_router.routes)
-app.router.routes.extend(chat_router.routes)
+app.include_router(health_router)
+app.include_router(api_router)
+app.include_router(chat_router)

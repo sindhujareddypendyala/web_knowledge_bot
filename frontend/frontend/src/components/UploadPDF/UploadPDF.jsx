@@ -57,7 +57,12 @@ export default function UploadPDF({ onUploaded }) {
           <div className="h-full rounded-full bg-blue-500 transition-all" style={{ width: `${progress}%` }} />
         </div>
       )}
-      {status === 'error' && <p className="mt-3 text-sm text-rose-300"><FiFileText className="inline" aria-hidden="true" /> Please choose a valid PDF file.</p>}
+      {status === 'error' && (
+        <p className="mt-3 text-sm text-rose-300">
+          <FiFileText className="inline" aria-hidden="true" />
+          Upload failed. Please ensure the file is a valid PDF and the backend is reachable.
+        </p>
+      )}
     </div>
   )
 }
