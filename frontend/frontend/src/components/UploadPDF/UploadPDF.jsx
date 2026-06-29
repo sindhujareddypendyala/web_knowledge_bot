@@ -9,8 +9,7 @@ export default function UploadPDF({ onUploaded }) {
   const [fileName, setFileName] = useState('')
 
   async function handleFile(file) {
-    const isPDF = file && (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'));
-    if (!isPDF) {
+    if (!file || (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf'))) {
       setStatus('error')
       return
     }

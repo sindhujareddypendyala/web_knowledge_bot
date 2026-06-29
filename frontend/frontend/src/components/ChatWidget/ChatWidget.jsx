@@ -103,17 +103,13 @@ export default function ChatWidget({ onClose, onMinimize }) {
               </p>
             </div>
             <SuggestionChips onSelect={chat.selectSuggestion} />
-            <UploadPDF onUploaded={(file) => {
-              chat.setToast(`Successfully indexed ${file.name}!`)
-              const successMessage = {
-                id: crypto.randomUUID(),
-                role: 'assistant',
-                content: `Successfully uploaded and indexed **"${file.name}"**! You can now ask questions about its contents.`,
-                source: 'pdf',
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                createdAt: Date.now()
+            <UploadPDF onUploaded={async (file) => {
+              try {
+                await uploadPDF(file)
+                chat.setToast('PDF uploaded and indexed!')
+              } catch {
+                chat.setToast('Upload failed. Try again.')
               }
-              chat.setMessages((current) => [...current, successMessage])
             }} />
           </div>
         )}
