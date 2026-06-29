@@ -70,14 +70,15 @@ class RAGVectorStore:
 
         documents = []
         for chunk in chunks:
-            meta = getattr(chunk, "metadata", {}) or {}
+            is_str = isinstance(chunk, str)
+            meta = {} if is_str else (getattr(chunk, "metadata", {}) or {})
             meta["source_type"] = "pdf"
             meta["pdf_name"] = pdf_name
-            meta["page_title"] = getattr(chunk, "title", pdf_name)
-            meta["url"] = getattr(chunk, "source_url", pdf_name)
+            meta["page_title"] = pdf_name if is_str else getattr(chunk, "title", pdf_name)
+            meta["url"] = pdf_name if is_str else getattr(chunk, "source_url", pdf_name)
             meta["timestamp"] = datetime.now(timezone.utc).isoformat()
 
-            page_content = getattr(chunk, "text", getattr(chunk, "page_content", str(chunk)))
+            page_content = chunk if is_str else getattr(chunk, "text", getattr(chunk, "page_content", str(chunk)))
             documents.append(Document(page_content=page_content, metadata=meta))
 
         self.store.store_documents(documents)
