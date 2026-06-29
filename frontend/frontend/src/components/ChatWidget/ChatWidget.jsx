@@ -30,7 +30,8 @@ export default function ChatWidget({ onClose, onMinimize }) {
   async function handleFileInputChange(event) {
     const file = event.target.files[0]
     if (!file) return
-    if (file.type !== 'application/pdf') {
+    const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')
+    if (!isPDF) {
       chat.setToast('Please upload a valid PDF file.')
       return
     }

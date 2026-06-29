@@ -6,7 +6,9 @@ from __future__ import annotations
 import time
 import logging
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException
+import io
+import pypdf
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from pydantic import BaseModel, Field
 
 import config
@@ -243,3 +245,48 @@ Answer:"""
         response=response_text,
         sources=sources,
     )
+
+
+class UploadPDFResponse(BaseModel):
+    success: bool
+    message: str
+    documents: list[str]
+
+
+@router.post("/upload-pdf", response_model=UploadPDFResponse)
+async def upload_pdf(file: UploadFile = File(...)) -> UploadPDFResponse:
+    """
+    Upload and index a PDF file in the vector store.
+    """
+    if not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Only PDF files are supported.")
+
+    try:
+        file_bytes = await file.read()
+        pdf_file = io.BytesIO(file_bytes)
+        
+        reader = pypdf.PdfReader(pdf_file)
+        text_content = ""
+        for page_num, page in enumerate(reader.pages):
+            page_text = page.extract_text()
+            if page_text:
+                text_content += f"\n--- Page {page_num + 1} ---\n{page_text}"
+                
+        if not text_content.strip():
+            raise HTTPException(status_code=400, detail="The uploaded PDF file is empty or has no extractable text.")
+            
+        from langchain_text_splitters import RecursiveCharacterTextSplitter
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+        chunks = text_splitter.split_text(text_content)
+        
+        vector_store = RAGVectorStore()
+        vector_store.store_pdf_chunks(chunks, pdf_name=file.filename)
+        
+        return UploadPDFResponse(
+            success=True,
+            message=f"Successfully indexed {len(chunks)} chunks from PDF document '{file.filename}'.",
+            documents=[file.filename]
+        )
+    except Exception as exc:
+        logger.error("Failed to parse/index PDF: %s", exc)
+        raise HTTPException(status_code=500, detail=f"PDF indexing failed: {exc}")

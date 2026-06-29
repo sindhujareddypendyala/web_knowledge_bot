@@ -14,7 +14,11 @@ TRUSTED_SITES: dict[str, list[str]] = {
     "aws": ["https://docs.aws.amazon.com/"],
     "linux": ["https://wiki.archlinux.org/"],
     "git": ["https://git-scm.com/docs"],
-    "postgresql": ["https://www.postgresql.org/docs/"]
+    "postgresql": ["https://www.postgresql.org/docs/"],
+    "general": [
+        "https://en.wikipedia.org/wiki/",
+        "https://www.geeksforgeeks.org/"
+    ]
 }
 
 

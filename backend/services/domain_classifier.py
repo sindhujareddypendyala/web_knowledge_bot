@@ -25,6 +25,26 @@ class DomainClassifier:
             (re.compile(r"\b(linux|wiki\.arch|arch\s+linux)\b", re.IGNORECASE), "linux"),
             (re.compile(r"\bgit\b", re.IGNORECASE), "git"),
             (re.compile(r"\b(postgres|postgresql)\b", re.IGNORECASE), "postgresql"),
+            # Broad technical concept fallback rule
+            (
+                re.compile(
+                    r"\b(ai|ml|genai|artificial\s+intelligence|machine\s+learning|deep\s+learning|"
+                    r"langchain|llama|rag|embedding|llm|nlp|neural\s+network|"
+                    r"backend|frontend|server|client|api|rest|graphql|grpc|http|"
+                    r"sdk|auth|login|signin|signup|credential|token|jwt|oauth|authenticate|authentication|authorize|"
+                    r"rate\s+limit|throttle|middleware|route|controller|view|template|"
+                    r"database|sql|nosql|query|index|schema|migration|orm|"
+                    r"code|programming|develop|software|deploy|ci/cd|devops|"
+                    r"cloud|gcp|azure|serverless|lambda|"
+                    r"npm|pip|maven|gradle|composer|package|dependency|"
+                    r"javascript|typescript|java|c\+\+|c\#|ruby|php|go|rust|"
+                    r"html|css|vue|angular|svelte|nextjs|nuxt|"
+                    r"django|flask|express|spring|rails|laravel|"
+                    r"mysql|sqlite|mongodb|redis|elasticsearch|explain|examples?|quick\s+start|guide)\b",
+                    re.IGNORECASE,
+                ),
+                "general",
+            ),
         ]
 
     def classify(self, query: str) -> str | None:
@@ -40,3 +60,4 @@ class DomainClassifier:
                 return domain_key
 
         return None
+
