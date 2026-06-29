@@ -1,5 +1,14 @@
 
 
+---
+title: Web Knowledge Bot
+emoji: 🤖
+colorFrom: blue
+colorTo: yellow
+sdk: docker
+pinned: false
+---
+
 # 🤖 Web Knowledge Bot
 
 An AI-powered **Technical Documentation Assistant** built using **Retrieval-Augmented Generation (RAG)** to help developers quickly find accurate answers from technical documentation websites and uploaded PDF documents.
