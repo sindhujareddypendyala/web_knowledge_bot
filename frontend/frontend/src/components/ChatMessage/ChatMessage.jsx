@@ -35,7 +35,34 @@ export default function ChatMessage({ message, onRegenerate }) {
           {copied && <span className="text-blue-300">Copied</span>}
         </div>
         {isAssistant && <SourceBadge source={message.source} />}
+        {isAssistant && message.sources && message.sources.length > 0 && (
+          <div className="mt-2 flex w-full flex-col gap-1.5 rounded-xl border border-slate-800 bg-slate-950/45 p-3 text-xs">
+            <span className="font-semibold text-slate-400">Sources:</span>
+            <ul className="flex flex-col gap-1 list-none p-0 m-0">
+              {message.sources.map((src, idx) => (
+                <li key={idx} className="flex items-center gap-1.5 text-slate-300">
+                  <span className="text-blue-400 font-medium">[{idx + 1}]</span>
+                  <a
+                    href={src.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 hover:text-blue-300 hover:underline transition truncate max-w-[280px]"
+                    title={src.title || src.url}
+                  >
+                    {src.title || src.url}
+                  </a>
+                  {src.confidence && (
+                    <span className="text-[10px] text-slate-500 font-medium ml-auto bg-slate-900/60 px-1.5 py-0.5 rounded-md">
+                      {Math.round(src.confidence * 100)}% Match
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </article>
   )
 }
+

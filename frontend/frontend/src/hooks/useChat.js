@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { suggestedQuestions } from '../utils/constants.js'
 import { buildChatExport, downloadTextFile, formatTime } from '../utils/helpers.js'
+import { sendMessage } from '../services/api.js'
 
 const assistantReplies = {
   auth: 'Use an API key for server-to-server calls and OAuth when users need scoped access. Send the key in `Authorization: Bearer YOUR_API_KEY`, rotate it regularly, and store it outside client bundles.',
@@ -36,12 +37,11 @@ export function useChat() {
   const [isTyping, setIsTyping] = useState(false)
   const [toast, setToast] = useState('')
   const [selectedSuggestion, setSelectedSuggestion] = useState(suggestedQuestions[0])
-  const typingTimer = useRef(null)
 
   const hasMessages = messages.length > 0
 
   const sendDraft = useCallback(
-    (value = draft) => {
+    async (value = draft) => {
       const cleanValue = value.trim()
       if (!cleanValue || isTyping) return
 
@@ -50,13 +50,26 @@ export function useChat() {
       setDraft('')
       setIsTyping(true)
 
-      window.clearTimeout(typingTimer.current)
-      typingTimer.current = window.setTimeout(() => {
-        const source = cleanValue.toLowerCase().includes('pdf') ? 'both' : 'website'
-        const assistantMessage = createMessage('assistant', getAssistantReply(cleanValue), source)
+      try {
+        const responseData = await sendMessage({ message: cleanValue })
+        const source = cleanValue.toLowerCase().includes('pdf') ? 'pdf' : 'website'
+        
+        const assistantMessage = createMessage('assistant', responseData.response, source)
+        if (responseData.sources) {
+          assistantMessage.sources = responseData.sources
+        }
         setMessages((current) => [...current, assistantMessage])
+      } catch (err) {
+        console.error('API call failed:', err)
+        const errorMessage = createMessage(
+          'assistant',
+          'Sorry, I failed to connect to the backend. Please ensure the backend is running and reachable.',
+          'website'
+        )
+        setMessages((current) => [...current, errorMessage])
+      } finally {
         setIsTyping(false)
-      }, 850)
+      }
     },
     [draft, isTyping],
   )
