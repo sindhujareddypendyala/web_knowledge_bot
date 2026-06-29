@@ -22,13 +22,13 @@ class IntegratedRetriever:
         self.collection_name = collection_name
         self.vector_store = WebsiteVectorStore(collection_name)
 
-    def retrieve(self, query: str, k: int = 5) -> list[RetrievedChunk]:
+    def retrieve(self, query: str, k: int = 5, filter: dict | None = None) -> list[RetrievedChunk]:
         """
         Retrieve chunks matching the query from the vector store.
         Ranks the merged results by similarity score (confidence).
         """
         try:
-            chunks = self.vector_store.retrieve(query, k=k)
+            chunks = self.vector_store.retrieve(query, k=k, filter=filter)
             # RetrievedChunk computes confidence score as 1.0 / (1.0 + distance)
             # Sort by confidence descending
             chunks.sort(key=lambda c: c.confidence or 0.0, reverse=True)

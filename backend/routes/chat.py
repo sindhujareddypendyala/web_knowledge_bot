@@ -129,7 +129,17 @@ async def chat(
 
         # 5. Retrieve Context (combining PDF and Web)
         retriever = IntegratedRetriever()
-        retrieved_chunks = retriever.retrieve(request.message, k=5)
+        
+        q_lower = request.message.lower()
+        is_pdf_focus = any(k in q_lower for k in ["pdf", "document", "file", "this", "summarize", "summary"])
+        
+        retrieved_chunks = []
+        if is_pdf_focus:
+            retrieved_chunks = retriever.retrieve(request.message, k=5, filter={"source_type": "pdf"})
+            logger.info("PDF-focused query detected. Retrieved %d PDF chunks.", len(retrieved_chunks))
+            
+        if not retrieved_chunks:
+            retrieved_chunks = retriever.retrieve(request.message, k=5)
     else:
         logger.info("No technical domain detected. Returning domain-specific fallback response.")
         fallback_response = (

@@ -67,11 +67,11 @@ class WebsiteVectorStore:
     def similarity_search(self, query: str, k: int = config.RETRIEVAL_TOP_K) -> list[Any]:
         return self.load().similarity_search(query, k=k)
 
-    def similarity_search_with_score(self, query: str, k: int = config.RETRIEVAL_TOP_K) -> list[tuple[Any, float]]:
-        return self.load().similarity_search_with_score(query, k=k)
+    def similarity_search_with_score(self, query: str, k: int = config.RETRIEVAL_TOP_K, filter: dict | None = None) -> list[tuple[Any, float]]:
+        return self.load().similarity_search_with_score(query, k=k, filter=filter)
 
-    def retrieve(self, query: str, k: int = config.RETRIEVAL_TOP_K) -> list[RetrievedChunk]:
-        pairs = self.similarity_search_with_score(query, k=k)
+    def retrieve(self, query: str, k: int = config.RETRIEVAL_TOP_K, filter: dict | None = None) -> list[RetrievedChunk]:
+        pairs = self.similarity_search_with_score(query, k=k, filter=filter)
         return [
             RetrievedChunk.from_langchain_result(doc, rank=index + 1, distance=score)
             for index, (doc, score) in enumerate(pairs)
