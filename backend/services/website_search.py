@@ -33,6 +33,9 @@ async def search_trusted_pages(query: str, domain_key: str, k: int = 5) -> list[
             logger.info("DuckDuckGo search returned %d URLs for prefix %s", len(urls), prefix)
             results.extend(urls)
         else:
+            if domain_key == "general":
+                logger.warning("DuckDuckGo search failed for general prefix %s. Skipping sitemap fallback.", prefix)
+                continue
             # Fallback to local sitemap discovery and keyword filtering
             logger.warning("DuckDuckGo search failed or returned nothing for %s. Using sitemap fallback.", prefix)
             urls = sitemap_fallback_search(query, prefix, k=k)
@@ -65,7 +68,7 @@ async def search_duckduckgo(query: str, site_prefix: str, k: int = 5) -> list[st
 
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get(url, params=params, headers=headers, timeout=10) as response:
+            async with session.get(url, params=params, headers=headers, timeout=3) as response:
                 if response.status != 200:
                     logger.warning("DuckDuckGo HTML returned HTTP status %d", response.status)
                     return []
