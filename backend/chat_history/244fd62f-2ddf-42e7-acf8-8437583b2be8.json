@@ -1,0 +1,12 @@
+[
+  {
+    "role": "user",
+    "content": "How do I implement authentication in FastAPI?",
+    "timestamp": "2026-06-29T12:33:36.850266+00:00"
+  },
+  {
+    "role": "assistant",
+    "content": "I retrieved relevant documentation but failed to generate a response via Gemini. Please verify your GOOGLE_API_KEY. (Error: Error calling model 'gemini-1.5-flash' (INVALID_ARGUMENT): 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'API key not valid. Please pass a valid API key.', 'status': 'INVALID_ARGUMENT', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'generativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass a valid API key.'}]}})",
+    "timestamp": "2026-06-29T12:34:00.216340+00:00"
+  }
+]

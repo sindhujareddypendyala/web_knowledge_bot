@@ -1,0 +1,12 @@
+[
+  {
+    "role": "user",
+    "content": "How do I implement authentication in FastAPI?",
+    "timestamp": "2026-06-29T12:36:35.254822+00:00"
+  },
+  {
+    "role": "assistant",
+    "content": "FastAPI mock response",
+    "timestamp": "2026-06-29T12:36:42.813450+00:00"
+  }
+]

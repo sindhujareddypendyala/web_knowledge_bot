@@ -1,0 +1,12 @@
+[
+  {
+    "role": "user",
+    "content": "How do I implement authentication in FastAPI?",
+    "timestamp": "2026-06-29T12:40:19.938463+00:00"
+  },
+  {
+    "role": "assistant",
+    "content": "I retrieved relevant documentation but failed to generate a response. Please verify your API key configuration. (Error: Error calling model 'gemini-1.5-flash' (NOT_FOUND): 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}})",
+    "timestamp": "2026-06-29T12:40:30.877210+00:00"
+  }
+]

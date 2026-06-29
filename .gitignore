@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.venv/
+venv/
+env/
+ENV/
+*.log
+
+# Node
+node_modules/
+dist/
+.env
+.env.local
+.env.*
+
+# Databases & Vector Stores
+vector_db/
+chroma.sqlite3
+*.sqlite3
+*.db
+chat_history/*.json
+chat_history/*.sqlite3
+website_docs/*.json
+
+# IDEs & System
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
