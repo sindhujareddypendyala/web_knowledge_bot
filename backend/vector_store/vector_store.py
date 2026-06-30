@@ -84,3 +84,14 @@ class RAGVectorStore:
             documents.append(Document(page_content=page_content, metadata=meta))
 
         self.store.store_documents(documents)
+
+    def clear_pdf_chunks(self) -> None:
+        """Delete all indexed PDF chunks from the vector store."""
+        try:
+            self.store.load()._collection.delete(where={"source_type": "pdf"})
+            # Import logger here if needed
+            from utils.logger import get_logger
+            get_logger(__name__).info("Cleared all existing PDF chunks from ChromaDB.")
+        except Exception as exc:
+            from utils.logger import get_logger
+            get_logger(__name__).warning("Failed to clear PDF chunks: %s", exc)

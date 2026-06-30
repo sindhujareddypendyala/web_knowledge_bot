@@ -180,7 +180,10 @@ async def chat(
         history_context += f"{msg['role'].capitalize()}: {msg['content']}\n"
 
     prompt = f"""You are a helpful, source-grounded RAG chatbot. Answer the user's question using the provided context.
-Please perform case-insensitive matching for all names, terms, and spelling variations in the context (for example, "Securedocs" and "securedocs" are exact matches for "SecureDocs"). If the information is in the context under any case variation, you must answer using that information.
+CRITICAL: If the provided context is not related to any of the supported technical domains (Python, FastAPI, Docker, Kubernetes, React, AWS, Linux, Git, and PostgreSQL), you MUST immediately and exclusively output the following fallback response:
+"I am a domain-specific technical documentation assistant. I can only assist with queries related to my supported domains: Python, FastAPI, Docker, Kubernetes, React, AWS, Linux, Git, and PostgreSQL. Please ask a question related to one of these topics."
+
+Otherwise, perform case-insensitive matching for all names, terms, and spelling variations in the context (for example, "Securedocs" and "securedocs" are exact matches for "SecureDocs"). If the information is in the context under any case variation, you must answer using that information.
 Always cite the source number (e.g. [1], [2]) when referencing facts from the context.
 If the context does not contain the answer, say "I cannot find the answer in the provided documentation" or answer based on your own knowledge but clearly state that it is not in the provided documentation.
 
@@ -271,6 +274,9 @@ async def upload_pdf(files: list[UploadFile] = File(...)) -> UploadPDFResponse:
     """
     uploaded_filenames = []
     total_chunks = 0
+    
+    vector_store = RAGVectorStore()
+    vector_store.clear_pdf_chunks()
 
     for file in files:
         if not file.filename.lower().endswith(".pdf"):
