@@ -180,6 +180,7 @@ async def chat(
         history_context += f"{msg['role'].capitalize()}: {msg['content']}\n"
 
     prompt = f"""You are a helpful, source-grounded RAG chatbot. Answer the user's question using only the provided context.
+Please perform case-insensitive matching when looking for terms in the context (e.g. "Securedocs" matches "SecureDocs").
 If the context does not contain the answer, say "I cannot find the answer in the provided documentation" or answer based on your knowledge but clearly state that it is not in the provided documentation.
 Always cite the source number (e.g. [1], [2]) when referencing facts from the context.
 
