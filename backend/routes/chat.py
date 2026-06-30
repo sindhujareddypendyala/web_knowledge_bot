@@ -27,7 +27,21 @@ from services.trusted_sites import get_trusted_prefixes
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage
 
+import re
+
 logger = logging.getLogger(__name__)
+
+
+def is_context_technical(context_text: str) -> bool:
+    """
+    Programmatically check if the retrieved context is related to our supported technical domains.
+    Uses the first 9 specific pattern rules of DomainClassifier.
+    """
+    classifier = DomainClassifier()
+    for pattern, domain_key in classifier.rules[:9]:
+        if pattern.search(context_text):
+            return True
+    return False
 
 router = APIRouter()
 
@@ -140,6 +154,23 @@ async def chat(
             
         if not retrieved_chunks:
             retrieved_chunks = retriever.retrieve(request.message, k=5)
+            
+        # Programmatically verify retrieved context domain safety
+        context_str = " ".join([c.text for c in retrieved_chunks])
+        if retrieved_chunks and not is_context_technical(context_str):
+            logger.info("Retrieved context is non-technical/off-domain. Returning fallback warning.")
+            fallback_response = (
+                "I am a domain-specific technical documentation assistant. "
+                "I can only assist with queries related to my supported domains: "
+                "Python, FastAPI, Docker, Kubernetes, React, AWS, Linux, Git, and PostgreSQL. "
+                "Please ask a question related to one of these topics."
+            )
+            add_message(session_id, "assistant", fallback_response)
+            return ChatResponse(
+                session_id=session_id,
+                response=fallback_response,
+                sources=[],
+            )
     else:
         logger.info("No technical domain detected. Returning domain-specific fallback response.")
         fallback_response = (
