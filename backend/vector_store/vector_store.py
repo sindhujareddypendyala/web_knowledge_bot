@@ -75,7 +75,9 @@ class RAGVectorStore:
             meta["source_type"] = "pdf"
             meta["pdf_name"] = pdf_name
             meta["page_title"] = pdf_name if is_str else getattr(chunk, "title", pdf_name)
+            meta["title"] = pdf_name if is_str else getattr(chunk, "title", pdf_name)
             meta["url"] = pdf_name if is_str else getattr(chunk, "source_url", pdf_name)
+            meta["source_url"] = pdf_name if is_str else getattr(chunk, "source_url", pdf_name)
             meta["timestamp"] = datetime.now(timezone.utc).isoformat()
 
             page_content = chunk if is_str else getattr(chunk, "text", getattr(chunk, "page_content", str(chunk)))
